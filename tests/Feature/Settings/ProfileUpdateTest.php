@@ -64,7 +64,10 @@ test('user can delete their account', function () {
         ->assertRedirect(route('home'));
 
     $this->assertGuest();
-    expect($user->fresh())->toBeNull();
+
+    // Users are soft-deleted (not purged) so historical orders/audit trails
+    // referencing their user_id remain intact.
+    expect($user->fresh()->trashed())->toBeTrue();
 });
 
 test('correct password must be provided to delete account', function () {
